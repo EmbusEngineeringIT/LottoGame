@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bcgdv.asia.lib.ticktock.TickTockView;
+import com.example.kums.lotto10.MainActivity;
 import com.example.kums.lotto10.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -60,7 +61,7 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
     public static int result = 0;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
-    public static int timerValue;
+    private int timerValue;
     @SuppressLint("ValidFragment")
     public TimerClassFragment()
     {
@@ -125,48 +126,27 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
 
     public void timerFunction1()
     {
+        long value=MainActivity.currentTimeValue;
+        new CountDownTimer(value, 1000) {
 
-        if (timerValue !=0)
-        {
-            firebaseDatabase.getReference("GlobalValue").addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot)
-                {
-                    timerValue=dataSnapshot.getValue(int.class);
-                    //  Log.d("GlobalValue"," "+timerValue);
-                    //    Toasty.success(getApplicationContext(),"Global Value"+s,Toast.LENGTH_SHORT).show();
-                }
+            public void onTick(long millisUntilFinished) {
+                txtProgress.setText(String.format("%02d:%02d:%02d",
+                        TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) -
+                                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)), // The change is in this line
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                int i=(int)((gametime-millisUntilFinished)/(double)gametime*100);
+                mProgressBar.setProgress(i);
+              //  Toasty.success(getContext(),"Progress Value "+i, Toast.LENGTH_SHORT).show();
+            }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-
-        }
-        else
-        {
-            new CountDownTimer(timerValue, 1000) {
-
-                public void onTick(long millisUntilFinished) {
-                    txtProgress.setText(String.format("%02d:%02d:%02d",
-                            TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
-                            TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) -
-                                    TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)), // The change is in this line
-                            TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
-                    int i=(int)((gametime-millisUntilFinished)/(double)gametime*100);
-                    mProgressBar.setProgress(i);
-                    //  Toasty.success(getContext(),"Progress Value "+i, Toast.LENGTH_SHORT).show();
-                }
-
-                public void onFinish()
-                {
-                    mProgressBar.setProgress(100);
-                    txtProgress.setText("Completed");
-                }
-            }.start();
-        }
+            public void onFinish()
+            {
+                mProgressBar.setProgress(100);
+                txtProgress.setText("Completed");
+            }
+        }.start();
     }
 
 

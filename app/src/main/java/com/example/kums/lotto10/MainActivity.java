@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.icu.util.TimeUnit;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.util.Base64;
 import android.util.Log;
+import android.util.TimeUtils;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -31,6 +33,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.thunder413.datetimeutils.DateTimeUnits;
+import com.github.thunder413.datetimeutils.DateTimeUtils;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
 import com.google.firebase.auth.FirebaseAuth;
@@ -47,8 +51,11 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -84,6 +91,8 @@ public class MainActivity extends AppCompatActivity
  //   private Button button;
     public static long comapanyAmountOnly;
     private FirebaseDatabase firebaseDatabase;
+    public static long timerValue;
+    public static long currentTimeValue;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -208,11 +217,7 @@ public class MainActivity extends AppCompatActivity
 
         if(v == tradeImageView)
         {
-            android.support.v4.app.Fragment timerClassFragment=new TimerClassFragment();
-            android.support.v4.app.FragmentManager fragmentManager=getSupportFragmentManager();
-            android.support.v4.app.FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.contain_layout,timerClassFragment);
-            fragmentTransaction.commit();
+            globalValues();
         }
         /*if (v==button)
         {
@@ -284,7 +289,43 @@ public class MainActivity extends AppCompatActivity
         }*/
     }
 
+    private void globalValues()
+    {
+        firebaseDatabase.getReference("GlobalValue").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                   timerValue=dataSnapshot.getValue(int.class);
 
+                Calendar calendar=Calendar.getInstance();
+                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:MM:SS");
+                String s=simpleDateFormat.format(calendar.getTime());
+                long tenTime=36000000;
+                long currentTime= DateTimeUtils.timeToMillis(s);
+                long addTime=tenTime+currentTime;
+                Toasty.success(getApplicationContext(),"Time"+addTime,Toast.LENGTH_SHORT).show();
+                currentTimeValue=timerValue-addTime;
+                Log.d("GlobalValue"," "+currentTimeValue);
+                //Toasty.success(getApplicationContext(),"Time"+currentTimeValue,Toast.LENGTH_SHORT).show();
+
+
+                if (timerValue!=0)
+                {
+                    android.support.v4.app.Fragment timerClassFragment=new TimerClassFragment();
+                    android.support.v4.app.FragmentManager fragmentManager=getSupportFragmentManager();
+                    android.support.v4.app.FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+                    fragmentTransaction.replace(R.id.contain_layout,timerClassFragment);
+                    fragmentTransaction.commit();
+                }
+                  //  Log.d("GlobalValue"," "+timerValue);
+                    //Toasty.success(getApplicationContext(),"Global Value"+timerValue,Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     private void userProfileInformation()
     {

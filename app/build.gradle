@@ -40,5 +40,6 @@ dependencies {
     compile 'com.google.android.gms:play-services:11.8.0'
     compile 'com.mikhaellopez:circularprogressbar:1.1.1'
     compile 'com.robinhood.ticker:ticker:1.0.0'
+    compile 'com.github.thunder413:DateTimeUtils:1.0'
 }
 apply plugin: 'com.google.gms.google-services'
