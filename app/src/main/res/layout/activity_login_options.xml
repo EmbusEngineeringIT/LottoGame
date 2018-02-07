@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey"
+    tools:context="com.example.kums.lotto10.LoginOptions">
+
+    <LinearLayout
+        android:weightSum="2"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:gravity="bottom|center"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0pt">
+
+            <TextView
+                android:text="2 3 H O U R S"
+                android:textColor="@color/white"
+                android:textSize="18pt"
+                android:textStyle="bold"
+                android:layout_marginTop="45px"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:weightSum="3"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:background="@drawable/google_login_back"
+                android:id="@+id/g_mail_sign"
+                android:layout_marginTop="5pt"
+                android:padding="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <!--<com.google.android.gms.common.SignInButton
+                    android:layout_width="match_parent"
+                    android:background="@drawable/google_login_back"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/g_mail_sign">
+                </com.google.android.gms.common.SignInButton>-->
+
+            <TextView
+                android:layout_gravity="center"
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:text="Google Login"
+                android:layout_width="65pt"
+                android:layout_height="wrap_content" />
+
+            <ImageView
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center"
+                android:background="@drawable/chrome"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+        </LinearLayout>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_marginTop="5pt"
+            android:id="@+id/fb_sign_in"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:padding="14dp"
+                android:background="@drawable/facebook_login_back"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="65pt"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Facebook Login"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            <ImageView
+                android:layout_marginLeft="5dp"
+                android:layout_gravity="center"
+                android:background="@drawable/facebook"
+                android:layout_width="30dp"
+                android:layout_height="30dp" />
+        </LinearLayout>
+        </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="5pt"
+        android:layout_marginBottom="10pt"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_weight="1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:id="@+id/gust_login"
+            android:layout_marginBottom="5pt"
+            android:padding="15dp"
+            android:background="@drawable/play_guest_login"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <TextView
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:text="@string/gust_login"
+            android:layout_width="65pt"
+            android:layout_height="wrap_content" />
+
+        <ImageView
+            android:layout_marginLeft="5dp"
+            android:layout_gravity="center"
+            android:background="@drawable/user"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
+        </LinearLayout>
+    </LinearLayout>
+    </LinearLayout>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "225412080045",
+    "firebase_url": "https://lotto10-a1f82.firebaseio.com",
+    "project_id": "lotto10-a1f82",
+    "storage_bucket": "lotto10-a1f82.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:225412080045:android:01f49665564f39bb",
+        "android_client_info": {
+          "package_name": "com.example.kums.lotto10"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "225412080045-ir5jthidq3bpuhartt4ko08hj6qsgul1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9_ILQglQYBquCEx17K48ratIX4Ic8QMA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
