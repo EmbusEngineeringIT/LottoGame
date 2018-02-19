@@ -33,15 +33,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import com.github.thunder413.datetimeutils.DateTimeUnits;
 import com.github.thunder413.datetimeutils.DateTimeUtils;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
@@ -51,6 +55,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,6 +70,7 @@ import fragment.TimerClassFragment;
 import pojo.UserAmountDetails;
 import pojo.UserDetails;
 
+import static com.example.kums.lotto10.R.id.date;
 import static com.example.kums.lotto10.R.id.select_players;
 
 public class MainActivity extends AppCompatActivity
@@ -82,7 +89,7 @@ public class MainActivity extends AppCompatActivity
     TextView oneText;
     static TextView companyTakeOver;*/
     private Bitmap bitmap;
-
+    String s4;
     private TextView startGameTextView;
     private ImageView logoutUser,tradeImageView;
     private CircleImageView userPhoto;
@@ -92,11 +99,12 @@ public class MainActivity extends AppCompatActivity
     public static long comapanyAmountOnly;
     private FirebaseDatabase firebaseDatabase;
     public static long timerValue;
-    public static long currentTimeValue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        firebaseDatabase=FirebaseDatabase.getInstance();
        /* Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);*/
    /*     playerText=(TextView)findViewById(R.id.player_txt);
@@ -127,10 +135,18 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    @Override
+    protected void onStart()
+    {
+        super.onStart();
+        firebaseDatabase=FirebaseDatabase.getInstance();
+    }
+
     private void registerUserDetails()
     {
         SharedPreferences sharedPreferences=this.getSharedPreferences(LoginOptions.mypreference,MODE_PRIVATE);
         int value=sharedPreferences.getInt(LoginOptions.SHAR_VALUE,0);
+
         if (value == 0)
         {
             userDetails();
@@ -194,7 +210,7 @@ public class MainActivity extends AppCompatActivity
         {
             SharedPreferences sharedPreferences=this.getSharedPreferences(LoginOptions.mypreference,MODE_PRIVATE);
             int value=sharedPreferences.getInt(LoginOptions.SHAR_VALUE,0);
-            if (value == 2 || value == 1)
+            if (value == 2)
             {
                 Toasty.warning(this,"Functionality is not Finish",Toast.LENGTH_SHORT).show();
             }
@@ -204,6 +220,7 @@ public class MainActivity extends AppCompatActivity
             }
 
         }
+
 
         if (v==logoutUser)
         {
@@ -217,7 +234,21 @@ public class MainActivity extends AppCompatActivity
 
         if(v == tradeImageView)
         {
-            globalValues();
+            android.support.v4.app.Fragment timerClassFragment=new TimerClassFragment(this);
+            android.support.v4.app.FragmentManager fragmentManager=getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.contain_layout,timerClassFragment);
+            fragmentTransaction.commit();
+        }
+        if (v == startGameTextView)
+        {
+            Toasty.success(getApplicationContext(),"Working",Toast.LENGTH_LONG).show();
+
+            android.support.v4.app.Fragment timerClassFragment=new TimerClassFragment(this);
+            android.support.v4.app.FragmentManager fragmentManager=getSupportFragmentManager();
+            android.support.v4.app.FragmentTransaction fragmentTransaction=fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.contain_layout,timerClassFragment);
+            fragmentTransaction.commit();
         }
         /*if (v==button)
         {
@@ -289,26 +320,43 @@ public class MainActivity extends AppCompatActivity
         }*/
     }
 
-    private void globalValues()
+    /*private void globalValues()
     {
         firebaseDatabase.getReference("GlobalValue").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                    timerValue=dataSnapshot.getValue(int.class);
 
-                Calendar calendar=Calendar.getInstance();
-                SimpleDateFormat simpleDateFormat=new SimpleDateFormat("HH:MM:SS");
-                String s=simpleDateFormat.format(calendar.getTime());
-                long tenTime=36000000;
-                long currentTime= DateTimeUtils.timeToMillis(s);
-                long addTime=tenTime+currentTime;
-                Toasty.success(getApplicationContext(),"Time"+addTime,Toast.LENGTH_SHORT).show();
-                currentTimeValue=timerValue-addTime;
-                Log.d("GlobalValue"," "+currentTimeValue);
-                //Toasty.success(getApplicationContext(),"Time"+currentTimeValue,Toast.LENGTH_SHORT).show();
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+                Calendar c=Calendar.getInstance();
+                String string=simpleDateFormat.format(c.getTime());
+                String defaultTimeString=String.valueOf(timerValue);
+                long difference;
+                try {
+                    Date date1 = simpleDateFormat.parse(string);
+                    Date date2 = simpleDateFormat.parse(defaultTimeString);
+                    Log.d("TimerValue"," "+date1.getTime());
+                    Log.d("TimerValue"," "+date2.getTime());
+                    if(date1.getTime() > date2.getTime())
+                    {
+                        difference = date1.getTime() - date2.getTime();
+                        currentTimeValue=difference;
+                        Toast.makeText(getApplicationContext(),"Working"+currentTimeValue,Toast.LENGTH_LONG).show();
+                        Log.d("TimeValue"," "+currentTimeValue);
+                    }
+                    else
+                    {
+                        difference = date2.getTime() - date1.getTime();
+                        currentTimeValue=difference;
+                        Toast.makeText(getApplicationContext(),"Working"+currentTimeValue,Toast.LENGTH_LONG).show();
+                        Log.d("TimeValue"," "+currentTimeValue);
+                    }
 
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
-                if (timerValue!=0)
+                if (currentTimeValue==0)
                 {
                     android.support.v4.app.Fragment timerClassFragment=new TimerClassFragment();
                     android.support.v4.app.FragmentManager fragmentManager=getSupportFragmentManager();
@@ -322,24 +370,86 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
             }
         });
     }
-
+*/
     private void userProfileInformation()
     {
         final AlertDialog.Builder alertDialog= new AlertDialog.Builder(this);
         View  view=View.inflate(this,R.layout.user_profile_information,null);
         alertDialog.setView(view);
-        CircleImageView circleImageView;
+        final CircleImageView circleImageView;
         TextView userNameInfo,userMobileNumberInfo,closeInfo;
         userNameInfo=(TextView)view.findViewById(R.id.user_name_info);
-        userMobileNumberInfo=(TextView)view.findViewById(R.id.user_mobile_info);
+       // userMobileNumberInfo=(TextView)view.findViewById(R.id.user_mobile_info);
         circleImageView=(CircleImageView)view.findViewById(R.id.user_info_image_img);
-        circleImageView.setImageBitmap(bitmap);
+
+        SharedPreferences sharedPreferences=this.getSharedPreferences(LoginOptions.mypreference,MODE_PRIVATE);
+        int value=sharedPreferences.getInt(LoginOptions.SHAR_VALUE,0);
+
+        if (value == 0 )
+        {
+            new AsyncTask<String, Void, Bitmap>() {
+                @Override
+                protected Bitmap doInBackground(String... strings) {
+                    String urlDisplay =firebaseUser.getPhotoUrl().toString();
+                    InputStream in = null;
+                    try {
+                        in = new URL(urlDisplay).openStream();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Bitmap mIcon11 = BitmapFactory.decodeStream(in);
+                    return mIcon11;
+                }
+
+                @Override
+                protected void onPostExecute(Bitmap bitmap)
+                {
+                    super.onPostExecute(bitmap);
+                    circleImageView.setImageBitmap(bitmap);
+                }
+            }.execute();
+        }
+        else if (value == 1)
+        {
+            firebaseDatabase.getReference(FirebaseAuth.getInstance().getUid().toString()+"/"+"imageUrl").addValueEventListener(new ValueEventListener()
+            {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot)
+                {
+                    String app=dataSnapshot.getValue(String.class);
+                    byte[] imageBytes= Base64.decode(app,Base64.NO_WRAP);
+                    bitmap= BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
+                    circleImageView.setImageBitmap(bitmap);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+        }
+
+        /*
+        firebaseDatabase.getReference(FirebaseAuth.getInstance().getUid().toString()+"/"+"imageUrl").addValueEventListener(new ValueEventListener()
+        {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                String app=dataSnapshot.getValue(String.class);
+                byte[] imageBytes= Base64.decode(app,Base64.NO_WRAP);
+                bitmap= BitmapFactory.decodeByteArray(imageBytes,0,imageBytes.length);
+                circleImageView.setImageBitmap(bitmap);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+*/
         userNameInfo.setText(firebaseUser.getEmail().toString());
-        userMobileNumberInfo.setText(firebaseUser.getPhoneNumber().toString());
+     //   userMobileNumberInfo.setText(firebaseUser.getPhoneNumber().toString());
         closeInfo=(TextView)view.findViewById(R.id.close_user_info);
         closeInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -352,13 +462,9 @@ public class MainActivity extends AppCompatActivity
         alertDialog.show();
     }
 
-
-
     @SuppressLint("StaticFieldLeak")
     public void userDetails()
     {
-//        userEmail.setText(firebaseUser.getEmail());
-  //      userName.setText(firebaseUser.getDisplayName());
         new AsyncTask<String, Void, Bitmap>() {
             @Override
             protected Bitmap doInBackground(String... strings) {
@@ -385,7 +491,6 @@ public class MainActivity extends AppCompatActivity
 
     public void gustUserDetails()
     {
-        firebaseDatabase=FirebaseDatabase.getInstance();
         firebaseDatabase.getReference(FirebaseAuth.getInstance().getUid().toString()+"/"+"imageUrl").addValueEventListener(new ValueEventListener()
         {
             @Override

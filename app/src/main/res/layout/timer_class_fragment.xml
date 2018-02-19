@@ -7,7 +7,8 @@
     android:weightSum="1"
     android:orientation="vertical"
     android:background="@color/light_grey"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto">
 
         <RelativeLayout
             android:layout_weight="0.1"
@@ -15,29 +16,31 @@
             android:gravity="center|top"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <com.mikhaellopez.circularprogressbar.CircularProgressBar
                 android:id="@+id/circularProgressbar"
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:layout_alignParentTop="true"
                 android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
                 app:cpb_background_progressbar_color="@color/red"
                 app:cpb_background_progressbar_width="5dp"
+                app:cpb_progress="0"
                 app:cpb_progressbar_color="@color/light_green"
-                app:cpb_progressbar_width="5dp"
-                app:cpb_progress="0"/>
+                app:cpb_progressbar_width="5dp" />
 
             <TextView
                 android:id="@+id/tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/circularProgressbar"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="84dp"
-                android:gravity="center"
-                android:text="0"
+                android:layout_alignLeft="@+id/circularProgressbar"
+                android:layout_alignStart="@+id/circularProgressbar"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="70dp"
+                android:layout_marginStart="70dp"
+                android:hint="00000"
                 android:textColor="@color/white"
-                android:textSize="10pt" />
+                android:textSize="20dp" />
         </RelativeLayout>
 <!--
     <LinearLayout

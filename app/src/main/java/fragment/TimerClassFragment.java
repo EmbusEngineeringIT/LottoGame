@@ -3,10 +3,11 @@ package fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.icu.util.Calendar;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,13 +15,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.bcgdv.asia.lib.ticktock.TickTockView;
-import com.example.kums.lotto10.MainActivity;
 import com.example.kums.lotto10.R;
+import com.example.kums.lotto10.TempActivity;
+import com.github.thunder413.datetimeutils.DateTimeUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -30,31 +29,27 @@ import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 import com.robinhood.ticker.TickerUtils;
 import com.robinhood.ticker.TickerView;
 
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
-import es.dmoral.toasty.Toasty;
-
-import static android.provider.Settings.System.DATE_FORMAT;
 import static com.facebook.FacebookSdk.getApplicationContext;
-import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
 /**
  * Created by Kums on 1/30/2018.
  */
 
+@SuppressLint("ValidFragment")
 public class TimerClassFragment extends Fragment implements View.OnClickListener {
 
     private Context context;
     CircularProgressBar mProgressBar;
-    private TextView txtProgress,currencyOne,currencyTwo,currencyThree,currencyFour,currencyFive,currencySix,currencySeven,currencyEight,payTextView;
+    private TextView txtProgress;
+    private TextView payTextView,currencyOne,currencyTwo,currencyThree,currencyFour,currencyFive,currencySix,currencySeven,currencyEight;;
     public static final long gametime=82800000;
     private View view;
     private TickerView tickerView;
@@ -62,10 +57,13 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
     private int timerValue;
-    @SuppressLint("ValidFragment")
-    public TimerClassFragment()
-    {
+    public static String currentTimeValue;
+    int randomInt;
 
+    @SuppressLint("ValidFragment")
+    public TimerClassFragment(Context context)
+    {
+        this.context=context;
     }
 
     @Override
@@ -109,36 +107,136 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
         {
          //   currencyAdding();
             //setRandomText();
-            result=result+10;
-            tickerView.setText("" + result);
+            //result=result+10;
+            Intent intent=new Intent(getApplicationContext(),TempActivity.class);
+            startActivity(intent);
+          //  tickerView.setText("" + result);
+           // startActivity(new Intent(getApplicationContext(), Empty.class));
+            //currentDate();
         }
     }
 
-
+    public void currentDate()
+    {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("dd:MM:yyyy kk:mm:ss");
+        Date date1=new Date();
+        String currentDate=simpleDateFormat.format(date1);
+        firebaseDatabase.getReference(firebaseAuth.getUid()).child("Date & Time").setValue(currentDate);
+        //  firebaseDatabase.getReference(firebaseAuth.getUid()).child("GlobalValue").setValue(ServerValue.TIMESTAMP);
+    }
 
     @Override
     public void onStart()
-        {
+    {
         super.onStart();
         mProgressBar.setProgress(0);
-        timerFunction1();
+        serverTime();
+        tickerView.setText("" + result);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+     //   serverTime();
     }
 
     public void timerFunction1()
     {
-        long value=MainActivity.currentTimeValue;
+        String source = currentTimeValue;
+        String[] tokens = source.split(":");
+        int secondsToMs = Integer.parseInt(tokens[2]) * 1000;
+        int minutesToMs = Integer.parseInt(tokens[1]) * 60000;
+        int hoursToMs = Integer.parseInt(tokens[0]) * 3600000;
+        long total = secondsToMs + minutesToMs + hoursToMs;
+
+        final long  value=gametime-total;
+
+  /*      txtProgress.setStartDuration(value);
+        Calendar rightNow = null;
+        int h = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            rightNow = Calendar.getInstance();
+            h = rightNow.get(Calendar.HOUR_OF_DAY);
+            Log.d("CurrentHours"," " +h);
+        }
+
+        if ( h == 10)
+        {
+            mProgressBar.setProgress(100);
+            txtProgress.stop();
+        }
+        else if (h>=11)
+        {
+            *//*String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished), TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)), TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
+            txtProgress.setText(hms);*//*
+            txtProgress.start();
+            int i=(int)((gametime-value)/(double)gametime*100);
+            mProgressBar.setProgress(i);
+        }*/
+
+        Log.d("TimerDiffff"," "+total);
+     /*   Log.d("TimerDiffff"," "+s);
+        long value = 0;
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("kk:mm:ss");
+        Date date;
+        try {
+            date=simpleDateFormat.parse(s);
+            value=date.getTime();
+            Log.d("TimerDiffff"," "+value);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }*/
+
         new CountDownTimer(value, 1000) {
 
-            public void onTick(long millisUntilFinished) {
+            public void onTick(long millisUntilFinished)
+            {
+                /*int seconds = (int) (millisUntilFinished / 1000) % 60 ;
+                int minutes = (int) ((millisUntilFinished / (1000*60)) % 60);
+                int hours   = (int) ((millisUntilFinished / (1000*60*60)) % 24);
+                */
                 txtProgress.setText(String.format("%02d:%02d:%02d",
                         TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
                         TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) -
                                 TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)), // The change is in this line
                         TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
                                 TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
-                int i=(int)((gametime-millisUntilFinished)/(double)gametime*100);
-                mProgressBar.setProgress(i);
-              //  Toasty.success(getContext(),"Progress Value "+i, Toast.LENGTH_SHORT).show();
+
+                Calendar rightNow = null;
+                int h = 0;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+
+                    rightNow = Calendar.getInstance();
+                    h = rightNow.get(Calendar.HOUR_OF_DAY);
+                    Log.d("CurrentHours"," " +h);
+                }
+
+                if ( h == 9)
+                {
+                    mProgressBar.setProgress(100);
+                    txtProgress.setText("Completed");
+                }
+                else if (h>=10)
+                {
+                    final DateFormat simpleDateFormat=new SimpleDateFormat("dd:MM:yyyy");
+                    java.util.Calendar calendar1= java.util.Calendar.getInstance();
+                    calendar1.add(java.util.Calendar.DAY_OF_YEAR,0);
+                    final String currentDate=simpleDateFormat.format(calendar1.getTime());
+                    StringBuilder stringBuilder=new StringBuilder();
+                    stringBuilder.append(currentDate);
+                    stringBuilder.append(" 10:00:00");
+                    final String serverTimes=String.valueOf(stringBuilder);
+                    firebaseDatabase.getReference().child("Server Date & Time").setValue(serverTimes);
+                    String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished), TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)), TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
+                    txtProgress.setText(hms);
+                    int i=(int)((gametime-value)/(double)gametime*100);
+                    mProgressBar.setProgress(i);
+                }
             }
 
             public void onFinish()
@@ -148,6 +246,113 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
             }
         }.start();
     }
+
+    public void serverTime()
+    {
+        final DateFormat simpleDateFormat=new SimpleDateFormat("dd:MM:yyyy");
+        java.util.Calendar calendar1= java.util.Calendar.getInstance();
+        calendar1.add(java.util.Calendar.DAY_OF_YEAR,0);
+        final String currentDate=simpleDateFormat.format(calendar1.getTime());
+        StringBuilder stringBuilder=new StringBuilder();
+        stringBuilder.append(currentDate);
+        stringBuilder.append(" 10:00:00");
+        final String serverTimes=String.valueOf(stringBuilder);
+        final DateFormat dateFormat=new SimpleDateFormat("dd:MM:yyyy kk:mm:ss");
+        final java.util.Calendar calendar= java.util.Calendar.getInstance();
+        calendar.add(java.util.Calendar.DAY_OF_YEAR,0);
+        String s1=dateFormat.format(calendar.getTime());
+        StringBuilder stringBuilder1=new StringBuilder();
+        stringBuilder1.append(s1);
+        final String currentTime=String.valueOf(stringBuilder1);
+        Log.d("ServerTimeDiff123"," "+currentTime);
+
+        firebaseDatabase.getReference("Server Date & Time").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                String s2=dataSnapshot.getValue(String.class);
+                if (s2 == null)
+                {
+                    firebaseDatabase.getReference().child("Server Date & Time").setValue(serverTimes);
+                }
+                else
+                {
+                   /*s4=s2;
+                   String date=s3;
+                   Date date2 = new Date();*/
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd:MM:yyyy kk:mm:ss");
+                    long different;
+                    try {
+                        Date date1 = simpleDateFormat.parse(serverTimes);
+                        Date date2 = simpleDateFormat.parse(currentTime);
+
+                        //Log.d("Date1time"," "+serverTimes);
+
+                        if (date1.getTime() < date2.getTime())
+                        {
+                            Log.d("Date1time"," "+date1.getTime());
+                            Log.d("Date1time1"," "+date2.getTime());
+                            different = date2.getTime() - date1.getTime();
+                        }
+                        else
+                        {
+                            Log.d("Date1time"," "+date1.getTime());
+                            Log.d("Date1time1"," "+date2.getTime());
+                            different = date1.getTime() - date2.getTime();
+                        }
+
+//                       System.out.println("startDate : " + startDate);
+                        //                    System.out.println("endDate : "+ endDate);
+                        //                  System.out.println("different : " + different);
+
+                        long secondsInMilli = 1000;
+                        long minutesInMilli = secondsInMilli * 60;
+                        long hoursInMilli = minutesInMilli * 60;
+                        long daysInMilli = hoursInMilli * 24;
+
+                        long elapsedDays = different / daysInMilli;
+                        different = different % daysInMilli;
+
+                        long elapsedHours = different / hoursInMilli;
+                        different = different % hoursInMilli;
+
+                        long elapsedMinutes = different / minutesInMilli;
+                        different = different % minutesInMilli;
+
+                        long elapsedSeconds = different / secondsInMilli;
+                        // String time=String.valueOf(elapsedDays+" "+ elapsedHours+" "+ elapsedMinutes+" "+elapsedSeconds);
+                        StringBuilder remainTime=new StringBuilder();
+                        remainTime.append(elapsedHours);
+                        remainTime.append(":");
+                        remainTime.append(elapsedMinutes);
+                        remainTime.append(":");
+                        remainTime.append(elapsedSeconds);
+                        currentTimeValue=String.valueOf(remainTime);
+                        String s= DateTimeUtils.millisToTime(elapsedHours);
+
+                        Log.d("TimerDif124"," "+currentTimeValue);
+                        Log.d("TimerDif123456"," "+s);
+                    }
+                    catch (ParseException e)
+                    {
+                        e.printStackTrace();
+                    }
+                    timerFunction1();
+                   /*
+                   SimpleDateFormat simpleDateFormat1=new SimpleDateFormat("dd:MM:yyyy hh:mm:ss");
+                   long d=DateTimeUtils.getDateDiff(date2,s4,DateTimeUnits.HOURS);
+                   String time=String.valueOf(d);*/
+                    // Log.d("ServerTimeDifference1"," "+time);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
 
 
     public void currencyAdding() {

@@ -4,7 +4,8 @@ android {
     compileSdkVersion 26
     defaultConfig {
         applicationId "com.example.kums.lotto10"
-        minSdkVersion 15
+        multiDexEnabled true
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -19,7 +20,7 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     //noinspection GradleCompatible
     implementation 'com.android.support:appcompat-v7:26.1.0'
     implementation 'com.android.support:design:26.1.0'
@@ -41,5 +42,9 @@ dependencies {
     compile 'com.mikhaellopez:circularprogressbar:1.1.1'
     compile 'com.robinhood.ticker:ticker:1.0.0'
     compile 'com.github.thunder413:DateTimeUtils:1.0'
+    implementation 'com.github.alexfu:CountDownView:0.1.0'
+    implementation files('libs/PGSDK_V2.1.jar')
+    compile 'com.squareup.retrofit2:retrofit:2.2.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

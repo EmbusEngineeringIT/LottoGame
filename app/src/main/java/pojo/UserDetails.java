@@ -6,10 +6,15 @@ package pojo;
 
 public class UserDetails
 {
-    public String name,mobileNumber,imageUrl,gender;
+    public String name,mobileNumber,imageUrl,gender,date;
 
-    public UserDetails()
+    public String getDate()
     {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public UserDetails(String imageUrl)

@@ -60,6 +60,9 @@ public class UserRegisterActivity extends AppCompatActivity implements View.OnCl
 
     private void registerUser()
     {
+
+
+
         String emailId=emailText.getText().toString().trim();
         String password=passwordText.getText().toString().trim();
 
