@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity
     static TextView companyTakeOver;*/
     private Bitmap bitmap;
     String s4;
-    private TextView startGameTextView;
+    private TextView startGameTextView,tempScoreTextView;
     private ImageView logoutUser,tradeImageView;
     private CircleImageView userPhoto;
 
@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
  //   private Button button;
     public static long comapanyAmountOnly;
     private FirebaseDatabase firebaseDatabase;
-    public static long timerValue;
+    public static long tempScore=1000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,9 +170,10 @@ public class MainActivity extends AppCompatActivity
         userPhoto.setOnClickListener(this);
         logoutUser=(ImageView)findViewById(R.id.logout_nav);
         logoutUser.setOnClickListener(this);
-
         startGameTextView=(TextView)findViewById(R.id.start_game_txt);
         startGameTextView.setOnClickListener(this);
+        tempScoreTextView=(TextView)findViewById(R.id.temp_score);
+        tempScoreTextView.setText(String.valueOf(tempScore));
     }
 
     @Override

@@ -6,7 +6,7 @@ package pojo;
 
 public class UserDetails
 {
-    public String name,mobileNumber,imageUrl,gender,date;
+    public String name,mobileNumber,imageUrl,gender,date,pay_status;
 
     public String getDate()
     {
@@ -30,11 +30,12 @@ public class UserDetails
         this.gender = gender;
     }
 
-    public UserDetails(String name, String mobileNumber, String imageUrl, String gender) {
+    public UserDetails(String name, String mobileNumber, String imageUrl, String gender,String pay_status) {
         this.name = name;
         this.mobileNumber = mobileNumber;
         this.imageUrl = imageUrl;
         this.gender = gender;
+        this.pay_status = pay_status;
     }
 
     public String getImageUrl() {

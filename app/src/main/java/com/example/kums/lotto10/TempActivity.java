@@ -2,7 +2,11 @@ package com.example.kums.lotto10;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.paytm.pgsdk.PaytmOrder;
 import com.paytm.pgsdk.PaytmPGService;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
@@ -10,6 +14,7 @@ import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
 import java.util.HashMap;
 import java.util.Map;
 
+import es.dmoral.toasty.Toasty;
 import fragment.TimerClassFragment;
 import paytm.Api;
 import paytm.Checksum;
@@ -126,36 +131,49 @@ public class TempActivity extends AppCompatActivity implements PaytmPaymentTrans
 
     @Override
     public void onTransactionResponse(Bundle bundle) {
-
+        Toasty.success(this,"Transaction Success", Toast.LENGTH_LONG).show();
+        Log.d("PayStatus ","Woriking Success");
+        //TimerClassFragment.result=result+amount;
     }
 
     @Override
     public void networkNotAvailable() {
-
+        Toasty.success(this,"Network Not Available", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void clientAuthenticationFailed(String s) {
-
+        Toasty.success(this,"Client Authentication Failed", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void someUIErrorOccurred(String s) {
-
+        Toasty.success(this,"Some Error Found", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onErrorLoadingWebPage(int i, String s, String s1) {
-
+        Toasty.success(this,"Error Loading Web Page", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onBackPressedCancelTransaction() {
+        Toasty.success(this,"Back Pressed Cancel", Toast.LENGTH_LONG).show();
         TimerClassFragment.result=result+amount;
+        FirebaseDatabase firebaseDatabase=FirebaseDatabase.getInstance();
+        FirebaseAuth firebaseAuth= FirebaseAuth.getInstance();
+        String value="Paid";
+        firebaseDatabase.getReference(FirebaseAuth.getInstance().getUid().toString()).child("pay_status").setValue(value);
+        long cash=TimerClassFragment.result;
+        String c=String.valueOf(cash);
+        firebaseDatabase.getReference().child("Total Cash").setValue(c);
     }
 
     @Override
     public void onTransactionCancel(String s, Bundle bundle) {
-        TimerClassFragment.result=result+amount;
+        Toasty.success(this,"Transaction Cancel", Toast.LENGTH_LONG).show();
     }
+
+
+
 }

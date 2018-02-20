@@ -46,5 +46,6 @@ dependencies {
     implementation files('libs/PGSDK_V2.1.jar')
     compile 'com.squareup.retrofit2:retrofit:2.2.0'
     compile 'com.squareup.retrofit2:converter-gson:2.2.0'
+    implementation 'com.android.support:recyclerview-v7:26.1.0'
 }
 apply plugin: 'com.google.gms.google-services'

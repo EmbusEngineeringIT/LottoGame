@@ -4,6 +4,7 @@ package fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.icu.util.Calendar;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.kums.lotto10.R;
 import com.example.kums.lotto10.TempActivity;
@@ -37,6 +39,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import es.dmoral.toasty.Toasty;
+
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
@@ -53,12 +57,13 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
     public static final long gametime=82800000;
     private View view;
     private TickerView tickerView;
-    public static int result = 0;
+    public static long result = 0;
     private FirebaseAuth firebaseAuth;
     private FirebaseDatabase firebaseDatabase;
     private int timerValue;
     public static String currentTimeValue;
     int randomInt;
+
 
     @SuppressLint("ValidFragment")
     public TimerClassFragment(Context context)
@@ -77,6 +82,8 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
         view = inflater.inflate(R.layout.timer_class_fragment, container, false);
         firebaseAuth=FirebaseAuth.getInstance();
         firebaseDatabase=FirebaseDatabase.getInstance();
+       // payPreferences=context.getSharedPreferences(mypreference,Context.MODE_PRIVATE);
+       // firebaseDatabase.getReference(firebaseAuth.getUid()).child("pay_status").setValue(PAY_STATUS);
         initial();
         return view;
     }
@@ -85,10 +92,10 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
     {
         tickerView=(TickerView)view.findViewById(R.id.ticker_currency);
         tickerView.setCharacterList(TickerUtils.getDefaultNumberList());
-        tickerView.setText("0000000");
+        tickerView.setText("0");
         mProgressBar=(CircularProgressBar) view.findViewById(R.id.circularProgressbar);
         txtProgress = (TextView)view.findViewById(R.id.tv);
-      /*  currencyOne=(TextView)view.findViewById(R.id.currency_val_one);
+      /*currencyOne=(TextView)view.findViewById(R.id.currency_val_one);
         currencyTwo=(TextView)view.findViewById(R.id.currency_val_two);
         currencyThree=(TextView)view.findViewById(R.id.currency_val_three);
         currencyFour=(TextView)view.findViewById(R.id.currency_val_four);
@@ -105,24 +112,66 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
     {
         if (v == payTextView)
         {
+            payFunction();
          //   currencyAdding();
             //setRandomText();
             //result=result+10;
-            Intent intent=new Intent(getApplicationContext(),TempActivity.class);
-            startActivity(intent);
           //  tickerView.setText("" + result);
            // startActivity(new Intent(getApplicationContext(), Empty.class));
             //currentDate();
         }
     }
 
-    public void currentDate()
+    private void cashFunction()
     {
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("dd:MM:yyyy kk:mm:ss");
-        Date date1=new Date();
-        String currentDate=simpleDateFormat.format(date1);
-        firebaseDatabase.getReference(firebaseAuth.getUid()).child("Date & Time").setValue(currentDate);
-        //  firebaseDatabase.getReference(firebaseAuth.getUid()).child("GlobalValue").setValue(ServerValue.TIMESTAMP);
+        firebaseDatabase.getReference().child("Total Cash").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String s=dataSnapshot.getValue(String.class);
+                if (s == null)
+                {
+                    String s1="0";
+                    firebaseDatabase.getReference().child("Total Cash").setValue(s1);
+                    tickerView.setText("" + result);
+                }
+                else {
+                    result =Long.parseLong(s);
+                    tickerView.setText("" + result);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void payFunction()
+    {
+        firebaseDatabase.getReference(FirebaseAuth.getInstance().getUid().toString()+"/"+"pay_status").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot)
+            {
+                String s=dataSnapshot.getValue(String.class);
+               // boolean pay_type=Boolean.valueOf(s);
+                Log.d("PayStatus"," "+s);
+                if (s.toString().length()==7)
+                {
+                    Intent intent=new Intent(getApplicationContext(),TempActivity.class);
+                    startActivity(intent);
+                }
+                else
+                {
+                    Toasty.success(context,"Already Ur Paid", Toast.LENGTH_LONG).show();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     @Override
@@ -131,7 +180,7 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
         super.onStart();
         mProgressBar.setProgress(0);
         serverTime();
-        tickerView.setText("" + result);
+        cashFunction();
     }
 
     @Override
@@ -221,7 +270,7 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
                     mProgressBar.setProgress(100);
                     txtProgress.setText("Completed");
                 }
-                else if (h>=10)
+                else if (h>=10 )
                 {
                     final DateFormat simpleDateFormat=new SimpleDateFormat("dd:MM:yyyy");
                     java.util.Calendar calendar1= java.util.Calendar.getInstance();
@@ -288,18 +337,19 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
 
                         //Log.d("Date1time"," "+serverTimes);
 
-                        if (date1.getTime() < date2.getTime())
-                        {
+                       // if (date1.getTime() < date2.getTime())
+                      //  {
                             Log.d("Date1time"," "+date1.getTime());
                             Log.d("Date1time1"," "+date2.getTime());
                             different = date2.getTime() - date1.getTime();
-                        }
+                       //}
+                        /*
                         else
                         {
                             Log.d("Date1time"," "+date1.getTime());
                             Log.d("Date1time1"," "+date2.getTime());
                             different = date1.getTime() - date2.getTime();
-                        }
+                        }*/
 
 //                       System.out.println("startDate : " + startDate);
                         //                    System.out.println("endDate : "+ endDate);

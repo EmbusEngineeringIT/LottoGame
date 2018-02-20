@@ -159,6 +159,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     {
         final String name=userName.getText().toString().trim();
         final String number=userMobileNumber.getText().toString().trim();
+        String pay="NotPaid";
 
         //Toast.makeText(this,"User Information Saved.....",Toast.LENGTH_SHORT).show();
         if(filePath !=null && gender!=null && name !=null && number!=null)
@@ -168,7 +169,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
             progressDialog.setCancelable(false);
             progressDialog.show();
 
-            final UserDetails userDetails=new UserDetails(name,number,imageEncoded,gender);
+            final UserDetails userDetails=new UserDetails(name,number,imageEncoded,gender,pay);
             final FirebaseUser firebaseUser=firebaseAuth.getCurrentUser();
          //   Log.d("ImageEncodedValue"," "+imageEncoded);
             databaseReference.child(firebaseUser.getUid()).setValue(userDetails);
