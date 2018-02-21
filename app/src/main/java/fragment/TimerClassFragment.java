@@ -2,6 +2,7 @@ package fragment;
 
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,10 +13,15 @@ import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +45,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import adapter.TicketAdapter;
 import es.dmoral.toasty.Toasty;
+import pojo.TicketNumber;
 
 import static com.facebook.FacebookSdk.getApplicationContext;
 
@@ -49,12 +57,11 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 
 @SuppressLint("ValidFragment")
 public class TimerClassFragment extends Fragment implements View.OnClickListener {
-
     private Context context;
     CircularProgressBar mProgressBar;
     private TextView txtProgress;
     private TextView payTextView,currencyOne,currencyTwo,currencyThree,currencyFour,currencyFive,currencySix,currencySeven,currencyEight;;
-    public static final long gametime=82800000;
+    public static long gametime=82800000;
     private View view;
     private TickerView tickerView;
     public static long result = 0;
@@ -92,7 +99,7 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
     {
         tickerView=(TickerView)view.findViewById(R.id.ticker_currency);
         tickerView.setCharacterList(TickerUtils.getDefaultNumberList());
-        tickerView.setText("0");
+        //tickerView.setText("0");
         mProgressBar=(CircularProgressBar) view.findViewById(R.id.circularProgressbar);
         txtProgress = (TextView)view.findViewById(R.id.tv);
       /*currencyOne=(TextView)view.findViewById(R.id.currency_val_one);
@@ -112,13 +119,8 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
     {
         if (v == payTextView)
         {
-            payFunction();
-         //   currencyAdding();
-            //setRandomText();
-            //result=result+10;
-          //  tickerView.setText("" + result);
-           // startActivity(new Intent(getApplicationContext(), Empty.class));
-            //currentDate();
+            gettingTicket();
+            //payFunction();
         }
     }
 
@@ -174,6 +176,68 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
 
     }
 
+    public void gettingTicket()
+    {
+        AlertDialog.Builder builder=new AlertDialog.Builder(context);
+        View view=getLayoutInflater().inflate(R.layout.ticket_option,null);
+        final RecyclerView recyclerView=(RecyclerView)view.findViewById(R.id.common_recycler_view);
+        builder.setView(view);
+        List<TicketNumber> ticketNumberList=new ArrayList<>() ;
+        int i=50001;
+        for(int i1=i;i1<=50025;i1++)
+        {
+            TicketNumber ticketNumber = new TicketNumber(String.valueOf(i1));
+            ticketNumberList.add(ticketNumber);
+        }
+
+        final TicketAdapter  ticketAdapter=new TicketAdapter(ticketNumberList);
+        GridLayoutManager layoutManager=new GridLayoutManager(getApplicationContext(),1);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(ticketAdapter);
+        TextView blueTextView,redTextView,greenTextView,yellowTextView;
+        blueTextView=(TextView)view.findViewById(R.id.blue_ticket);
+        redTextView=(TextView)view.findViewById(R.id.red_ticket);
+        greenTextView=(TextView)view.findViewById(R.id.green_ticket);
+        yellowTextView=(TextView)view.findViewById(R.id.yellow_ticket);
+
+
+        final LinearLayout linearLayout=(LinearLayout)view.findViewById(R.id.recycler_back);
+
+        blueTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                linearLayout.setBackgroundColor(getResources().getColor(R.color.colorPrimaryDark));
+            }
+        });
+
+        redTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toasty.success(getApplicationContext(),"Red",Toast.LENGTH_SHORT).show();
+                linearLayout.setBackgroundColor(getResources().getColor(R.color.red));
+            }
+        });
+        greenTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toasty.success(getApplicationContext(),"Green",Toast.LENGTH_SHORT).show();
+                linearLayout.setBackgroundColor(getResources().getColor(R.color.light_green));
+            }
+        });
+
+        yellowTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toasty.success(getApplicationContext(),"Yellow",Toast.LENGTH_SHORT).show();
+                linearLayout.setBackgroundColor(getResources().getColor(R.color.yellow));
+            }
+        });
+        builder.show();
+    }
+
+
     @Override
     public void onStart()
     {
@@ -202,8 +266,25 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
         int minutesToMs = Integer.parseInt(tokens[1]) * 60000;
         int hoursToMs = Integer.parseInt(tokens[0]) * 3600000;
         long total = secondsToMs + minutesToMs + hoursToMs;
+        long value=0;
+        Calendar rightNow = null;
+        int h1 = 0;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
 
-        final long  value=gametime-total;
+            rightNow = Calendar.getInstance();
+            h1 = rightNow.get(Calendar.HOUR_OF_DAY);
+            Log.d("CurrentHours"," " +h1);
+        }
+        if(h1>=24 || h1<=9)
+        {
+            //gametime=32400000;
+            value=total-3600000;
+            Log.d("CurrentHours"," " +value);
+        }
+        else
+        {
+            value=gametime-total;
+        }
 
   /*      txtProgress.setStartDuration(value);
         Calendar rightNow = null;
@@ -229,6 +310,7 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
         }*/
 
         Log.d("TimerDiffff"," "+total);
+        Log.d("TimerDiffff1"," "+value);
      /*   Log.d("TimerDiffff"," "+s);
         long value = 0;
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("kk:mm:ss");
@@ -241,7 +323,8 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
             e.printStackTrace();
         }*/
 
-        new CountDownTimer(value, 1000) {
+        final long finalValue = value;
+        new CountDownTimer(finalValue, 1000) {
 
             public void onTick(long millisUntilFinished)
             {
@@ -249,12 +332,6 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
                 int minutes = (int) ((millisUntilFinished / (1000*60)) % 60);
                 int hours   = (int) ((millisUntilFinished / (1000*60*60)) % 24);
                 */
-                txtProgress.setText(String.format("%02d:%02d:%02d",
-                        TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
-                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) -
-                                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)), // The change is in this line
-                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
-                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
 
                 Calendar rightNow = null;
                 int h = 0;
@@ -283,9 +360,19 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
                     firebaseDatabase.getReference().child("Server Date & Time").setValue(serverTimes);
                     String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millisUntilFinished), TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)), TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished)));
                     txtProgress.setText(hms);
-                    int i=(int)((gametime-value)/(double)gametime*100);
-                    mProgressBar.setProgress(i);
+                   //
                 }
+
+                txtProgress.setText(String.format("%02d:%02d:%02d",
+                        TimeUnit.MILLISECONDS.toHours(millisUntilFinished),
+                        TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished) -
+                                TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millisUntilFinished)), // The change is in this line
+                        TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) -
+                                TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished))));
+                int i=(int)((gametime- finalValue)/(double)gametime*100);
+                //int i= (int) (millisUntilFinished/100);
+                mProgressBar.setProgress(i);
+
             }
 
             public void onFinish()
@@ -337,19 +424,18 @@ public class TimerClassFragment extends Fragment implements View.OnClickListener
 
                         //Log.d("Date1time"," "+serverTimes);
 
-                       // if (date1.getTime() < date2.getTime())
-                      //  {
+                        if (date1.getTime() < date2.getTime())
+                        {
                             Log.d("Date1time"," "+date1.getTime());
                             Log.d("Date1time1"," "+date2.getTime());
                             different = date2.getTime() - date1.getTime();
-                       //}
-                        /*
+                       }
                         else
                         {
                             Log.d("Date1time"," "+date1.getTime());
                             Log.d("Date1time1"," "+date2.getTime());
                             different = date1.getTime() - date2.getTime();
-                        }*/
+                        }
 
 //                       System.out.println("startDate : " + startDate);
                         //                    System.out.println("endDate : "+ endDate);

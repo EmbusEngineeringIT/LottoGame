@@ -5,9 +5,63 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <android.support.v4.view.ViewPager
-            android:background="@color/light_green"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </android.support.v4.view.ViewPager>
+                <LinearLayout
+                    android:weightSum="4"
+                    android:id="@+id/tableRow1"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
+                        <TextView
+                            android:id="@+id/blue_ticket"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:text="Blue"
+                            android:padding="18dp"
+                            android:textColor="@color/white"
+                            android:background="@color/colorPrimaryDark"/>
+                        <TextView
+                            android:id="@+id/red_ticket"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:text="Red"
+                            android:padding="18dp"
+                            android:textColor="@color/white"
+                            android:background="@color/red"/>
+                        <TextView
+                            android:id="@+id/green_ticket"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:text="Green"
+                            android:padding="18dp"
+                            android:textColor="@color/white"
+                            android:background="@color/light_green"/>
+                        <TextView
+                            android:id="@+id/yellow_ticket"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_weight="1"
+                            android:text="Yellow"
+                            android:padding="18dp"
+                            android:textColor="@color/white"
+                            android:background="@color/yellow"/>
+
+                </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="match_parent"
+            android:layout_width="match_parent">
+                <include
+                    android:id="@+id/ticket_layout_id"
+                    layout="@layout/common_ticket_color_layout"
+                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                </include>
+        </LinearLayout>
 </LinearLayout>
